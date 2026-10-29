@@ -119,7 +119,7 @@ function normalizeDeck(deck, request) {
   }
   slides[0].layout = "cover";
   slides[slides.length - 1].layout = "closing";
-  return { title: clampText(deck.title || request.topic, 180), subtitle: clampText(deck.subtitle || request.audience, 220), slides };
+  return { title: clampText(deck.title || request.topic, 180), subtitle: clampText(deck.subtitle || "", 220), slides };
 }
 async function draftDeck(request) {
   const historyTemplate = /history template|slidesgo terracotta|ancient world history/i.test(request.visualStyle || "") || /\b(history|historical|ancient|civilization|civilisation|empire|archaeology|archaeological|middle ages|medieval|world war|renaissance|revolution)\b/i.test(request.topic || "");
@@ -131,7 +131,7 @@ async function draftDeck(request) {
   const batchSize = Math.max(2, Math.min(3, Number(process.env.NVIDIA_DRAFT_BATCH_SIZE || 3)));
   const allSlides = [];
   let deckTitle = request.topic;
-  let deckSubtitle = request.audience;
+  let deckSubtitle = "";
   for (let start = 0; start < total; start += batchSize) {
     const count = Math.min(batchSize, total - start);
     const end = start + count;
@@ -340,7 +340,6 @@ async function buildPptx(jobId, deck, request, imageResults) {
       addText(slide,deck.title,{x:0.78,y:1.45,w:5.85,h:2.3,fontFace:historyTemplate ? "Arial" : "Aptos Display",fontSize:34,bold:true,breakLine:false,fit:"shrink",valign:"mid"});
       addText(slide,s.subtitle || deck.subtitle,{x:0.8,y:4.0,w:5.55,h:0.9,fontSize:17,color:palette.muted,fit:"shrink",valign:"top"});
       shape(slide,pptx.ShapeType.rect,{x:0.8,y:5.22,w:0.75,h:0.06,fill:{color:palette.accent2},line:{color:palette.accent2}});
-      addText(slide,`${request.audience}  ·  ${new Date().toLocaleDateString()}`,{x:0.8,y:5.55,w:5.5,h:0.4,fontSize:10,color:palette.muted});
       addText(slide,"A clear, practical guide",{x:0.8,y:6.65,w:4.8,h:0.3,fontSize:10,bold:true,color:palette.accent});
     } else if (isClosing) {
       shape(slide,pptx.ShapeType.rect,{x:0,y:0,w:W,h:H,fill:{color:palette.bg},line:{color:palette.bg}});

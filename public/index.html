@@ -2,34 +2,26 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>NVIDIA AI Presentation Studio</title>
+<title>Create a PowerPoint</title>
 <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
 <div class="ambient ambient-a"></div><div class="ambient ambient-b"></div>
-<header class="topbar"><a class="brand" href="/"><span class="brand-mark">✦</span><span>AI Presentation <b>Studio</b></span></a><div class="status"><span id="apiDot" class="dot"></span><span id="apiStatus">Checking NVIDIA API…</span></div></header>
+
 <main class="shell">
-<section class="hero"><div class="eyebrow"><span class="spark">✦</span> MULTI-MODEL WORKFLOW</div><h1>Turn an idea into a<br><span>presentation that moves.</span></h1><p>NVIDIA models plan and write your slides. Google image search finds real visuals, then AI selects the best candidates for an editable PowerPoint.</p>
-<div class="pipeline"><div><i>01</i><b>Plan & write</b><small>Reasoning + content AI</small></div><span class="pipe-arrow">→</span><div><i>02</i><b>Search & filter</b><small>Google Images + vision AI</small></div><span class="pipe-arrow">→</span><div><i>03</i><b>Build & review</b><small>Editable .pptx</small></div></div></section>
 <div class="workspace">
 <section class="panel form-panel"><div class="panel-heading"><div><span class="section-kicker">CREATE A DECK</span><h2>Presentation brief</h2></div><span class="pill">PPTX · 16:9</span></div>
 <form id="genForm">
 <label for="topic">What is your presentation about?</label><textarea id="topic" name="topic" rows="3" maxlength="240" required placeholder="e.g. How generative AI is transforming healthcare"></textarea>
-<div class="field-row"><div><label for="slideCount">Slides</label><select id="slideCount" name="slideCount"><option value="4">4 slides</option><option value="6">6 slides</option><option value="8" selected>8 slides</option><option value="10">10 slides</option><option value="12">12 slides</option></select></div><div><label for="audience">Audience</label><input id="audience" name="audience" value="General professional audience" maxlength="180"></div></div>
+<div><label for="slideCount">Slides</label><select id="slideCount" name="slideCount"><option value="4">4 slides</option><option value="6">6 slides</option><option value="8" selected>8 slides</option><option value="10">10 slides</option><option value="12">12 slides</option></select></div>
 <div class="field-row"><div><label for="tone">Writing tone</label><select id="tone" name="tone"><option>Clear, insightful, professional</option><option>Academic and evidence-led</option><option>Executive and strategic</option><option>Persuasive and energetic</option><option>Beginner-friendly</option></select></div><div><label for="visualStyle">Visual direction</label><select id="visualStyle" name="visualStyle"><option>Premium editorial, cinematic, clean</option><option>Minimal corporate, white and indigo</option><option>Dark futuristic, neon accents</option><option>Scientific infographic style</option><option>Warm, human-centered photography</option><option>Playful, colorful illustration</option><option>History template — Slidesgo terracotta and parchment</option></select></div></div>
-<label for="instructions">Extra instructions <span class="optional">OPTIONAL</span></label><textarea id="instructions" name="instructions" rows="2" maxlength="12000" placeholder="Include sections, preferred examples, key points, brand colors…"></textarea>
-<div class="notice"><span>✦</span><div><b>Real images, AI-filtered</b><small>Google PSE finds image candidates. NVIDIA vision AI compares downloadable candidates and selects a relevant image for each slide.</small></div></div>
-<button id="submitBtn" type="submit"><span>Generate PowerPoint</span><span class="button-icon">↗</span></button><p class="fineprint">Your NVIDIA API key stays on the server. Generation time and availability depend on your model access and API quota.</p>
+
+<button id="submitBtn" type="submit"><span>Generate PowerPoint</span><span class="button-icon">↗</span></button><p class="fineprint">Your presentation is created in stages. You can follow progress here and download the editable PowerPoint when it is ready.</p>
 </form></section>
-<aside class="side-column"><section class="panel model-panel"><div class="panel-heading"><div><span class="section-kicker">MODEL ROUTING</span><h2>Your AI team</h2></div><span class="live-pill"><span class="dot"></span> ROUTED</span></div>
-<div class="model-row"><span class="model-icon purple">◈</span><div><b>Planner & writer</b><small id="textModel">Nemotron reasoning</small></div><span class="model-tag">TEXT</span></div>
-<div class="model-row"><span class="model-icon blue">⌘</span><div><b>Content reviewer</b><small id="reviewModel">Nemotron review</small></div><span class="model-tag">QA</span></div>
-<div class="model-row"><span class="model-icon orange">▧</span><div><b>Visual creator</b><small id="imageModel">NVIDIA image model</small></div><span class="model-tag">IMAGE</span></div>
-<div class="model-foot">Retries with backoff · Limited concurrency · Local asset storage</div></section>
-<section class="panel job-panel"><div class="panel-heading"><div><span class="section-kicker">WORKSPACE</span><h2>Recent presentations</h2></div><button id="refreshBtn" class="icon-button" title="Refresh jobs">↻</button></div><div id="jobsList" class="jobs-list"><div class="empty">Your generated decks will appear here.</div></div></section></aside>
+
 </div>
-<div id="activeJob" class="panel active-job hidden"><div class="active-top"><div><span class="section-kicker">GENERATION STATUS</span><h2 id="jobTitle">Preparing your presentation…</h2><p id="jobStage">Waiting for the AI team</p></div><span id="progressValue" class="progress-value">0%</span></div><div class="progress-track"><div id="progressBar"></div></div><div id="assetGrid" class="asset-grid"></div><div id="jobError" class="error hidden"></div><a id="downloadBtn" class="download-btn hidden" href="#">Download editable PowerPoint ↗</a></div>
-<footer><span>AI PRESENTATION STUDIO</span><span>Designed for ideas worth sharing.</span></footer>
+<div id="activeJob" class="panel active-job hidden"><div class="active-top"><div><span class="section-kicker">CREATION PROGRESS</span><h2 id="jobTitle">Preparing your presentation…</h2><p id="jobStage">Getting things ready</p></div><span id="progressValue" class="progress-value">0%</span></div><div class="progress-track"><div id="progressBar"></div></div><ol id="stepList" class="step-list"><li data-stage="drafting"><span>1</span><div><b>Writing your slides</b><small>Building the story and slide content</small></div></li><li data-stage="reviewing"><span>2</span><div><b>Refining the content</b><small>Checking flow, clarity, and key takeaways</small></div></li><li data-stage="generating_images"><span>3</span><div><b>Finding relevant visuals</b><small>Matching images to each slide</small></div></li><li data-stage="building_powerpoint"><span>4</span><div><b>Building your PowerPoint</b><small>Arranging layouts and preparing the editable file</small></div></li><li data-stage="complete"><span>✓</span><div><b>Ready to download</b><small>Your presentation is complete</small></div></li></ol><div id="jobError" class="error hidden"></div><a id="downloadBtn" class="download-btn hidden" href="#">Download editable PowerPoint ↗</a></div>
+
 </main>
 <script src="/app.js"></script>
 </body></html>

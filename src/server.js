@@ -42,21 +42,14 @@ function pump() {
   }
 }
 app.get("/api/health", (_req,res) => res.json({
-  ok:true, app:"NVIDIA Multi-Model PowerPoint Generator",
+  ok:true, app:"AI Presentation Studio",
   configured: Boolean(process.env.NVIDIA_API_KEY),
-  models: {
-    text: process.env.NVIDIA_TEXT_MODEL || "nvidia/nemotron-3.5-lightning-30b-a3b",
-    review: process.env.NVIDIA_REVIEW_MODEL || "nvidia/nemotron-3.5-lightning-30b-a3b",
-    image: process.env.IMAGE_PROVIDER || "google_pse",
-    imageSearchConfigured: Boolean(process.env.PSE_CX || process.env.GOOGLE_CSE_ID),
-  imageSearchMode: (process.env.PSE_API_KEY || process.env.GOOGLE_CSE_API_KEY) ? "Google JSON API" : "Google PSE browser mode (no API key)"
-  },
   queueLength: queue.length, activeJobs: active.size, maxConcurrent
 }));
 app.post("/api/generate", (req,res) => {
   const parsed = schema.safeParse(req.body);
   if (!parsed.success) return res.status(400).json({error:"Please check the form fields.",details:parsed.error.issues.map(x=>({field:x.path.join("."),message:x.message}))});
-  if (!process.env.NVIDIA_API_KEY) return res.status(503).json({error:"NVIDIA_API_KEY is not configured. Copy .env.example to .env, add your key, then restart."});
+  if (!process.env.NVIDIA_API_KEY) return res.status(503).json({error:"Presentation service setup is incomplete. Please contact the administrator."});
   const request = parsed.data;
   const id = crypto.randomUUID();
   const job = {id, topic:request.topic, request_json:JSON.stringify(request)};
@@ -66,11 +59,13 @@ app.post("/api/generate", (req,res) => {
   pump();
   res.status(202).json({id,status:"queued",message:"Presentation queued. You can monitor progress."});
 });
-app.get("/api/jobs", (_req,res) => res.json({jobs:listJobs(30)}));
+app.get("/api/jobs", (_req,res) => res.json({jobs:listJobs(30).map(j=>({...j,error:undefined,userError:j.status === "failed" ? "We could not finish this presentation. Please try again or choose fewer slides." : undefined}))}));
 app.get("/api/jobs/:id", (req,res) => {
   const job = getJob(req.params.id);
   if (!job) return res.status(404).json({error:"Job not found."});
   const output = {...job};
+  output.error = undefined;
+  output.userError = job.status === "failed" ? "We could not finish this presentation. Please try again or choose fewer slides." : undefined;
   if (output.pptx_path) output.downloadUrl = `/api/jobs/${job.id}/download`;
   output.assets = output.assets.map(a => ({...a, imageUrl:a.image_path ? `/api/jobs/${job.id}/images/${a.slide_number}` : null, image_path:undefined, sourceUrl:a.source_url || null, sourceTitle:a.source_title || null, sourcePageUrl:a.source_page_url || null, source_url:undefined, source_title:undefined, source_page_url:undefined}));
   res.json(output);
